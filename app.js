@@ -27,7 +27,7 @@ app.get("/api/song/:title/:artist", async (req, res) => {
     artist: req.params.artist,
   });
   if (song.length === 0) {
-    return res.status(400).json({
+    return res.json({
       message: "This song hasn't been added to the Rhymepedia database",
       status: 0,
     });
