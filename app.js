@@ -27,7 +27,7 @@ app.get("/api/song/:title/:artist", async (req, res) => {
     artist: req.params.artist,
   });
   if (song.length === 0) {
-    return res.json({
+    return res.status(400).json({
       message: "This song hasn't been added to the Rhymepedia database",
       status: 0,
     });
@@ -56,17 +56,24 @@ app.post("/api/create", async (req, res) => {
       lyrics: req.body.lyrics,
       lyrics_text: req.body.lyrics_text,
     });
-    return res.status(200);
+    return res.status(200).json({ msg: "Song added" });
   } else {
-    await Song.findOneAndUpdate(
-      { title: req.body.title, artist: req.body.artist },
-      {
-        title: req.body.title,
-        artist: req.body.artist,
-        lyrics: req.body.lyrics,
-        lyrics_text: req.body.lyrics_text,
-      }
-    );
+    try {
+      await Song.findOneAndUpdate(
+        { title: req.body.title, artist: req.body.artist },
+        {
+          title: req.body.title,
+          artist: req.body.artist,
+          lyrics: req.body.lyrics,
+          lyrics_text: req.body.lyrics_text,
+        }
+      );
+      return res.status(200).json({ msg: "Song updated" });
+    } catch {
+      return res
+        .status(500)
+        .json({ msg: "An error occured while updating the document" });
+    }
   }
 });
 
